@@ -1,0 +1,72 @@
+[
+  {
+    "id": "icmr-htn-001",
+    "title": "ICMR Hypertension Management Guidelines",
+    "category": "hypertension",
+    "source": "ICMR-Indian Hypertension Association 2023",
+    "content": "Target BP for most adults: <130/80 mmHg. For patients >65 years: <140/90 mmHg. First-line therapy: ACE inhibitors or ARBs for diabetic patients with hypertension. Thiazide diuretics for isolated systolic hypertension in elderly. Lifestyle modifications: sodium restriction <5g/day, regular aerobic exercise 30 min/day, weight reduction."
+  },
+  {
+    "id": "icmr-htn-002",
+    "title": "Hypertension Red Flags",
+    "category": "hypertension",
+    "source": "ICMR-Indian Hypertension Association 2023",
+    "content": "Hypertensive urgency: BP >180/120 mmHg without end-organ damage. Hypertensive emergency: BP >180/120 mmHg WITH end-organ damage (chest pain, dyspnoea, neurological deficit, visual changes, acute kidney injury). Requires immediate IV therapy and ICU admission. Do not lower BP rapidly — risk of watershed infarction."
+  },
+  {
+    "id": "icmr-dm-001",
+    "title": "ICMR Diabetes Management Guidelines",
+    "category": "diabetes",
+    "source": "ICMR-INDIAB 2023",
+    "content": "HbA1c target: <7% for most adults, <8% for elderly/frail. First-line: Metformin 500mg BD with meals (if eGFR >30). Add SGLT2 inhibitor (empagliflozin) if cardiovascular disease present. Add GLP-1 agonist if obesity. Monitor renal function annually. Screen for diabetic retinopathy annually. Foot examination every visit."
+  },
+  {
+    "id": "icmr-dm-002",
+    "title": "Hypoglycaemia Management",
+    "category": "diabetes",
+    "source": "ICMR-INDIAB 2023",
+    "content": "Hypoglycaemia: blood glucose <70 mg/dL with symptoms OR <54 mg/dL regardless of symptoms. Treat conscious patient: 15g fast-acting carbohydrate (3-4 glucose tablets or 150mL fruit juice). Recheck in 15 minutes. Unconscious patient: IV glucose 25mL of 50% dextrose. Educate on sick-day rules. Review insulin dose."
+  },
+  {
+    "id": "icmr-fever-001",
+    "title": "Acute Febrile Illness - Primary Care Protocol",
+    "category": "febrile_illness",
+    "source": "ICMR Acute Febrile Illness Protocol 2022",
+    "content": "For febrile illness in India: Always screen for malaria (peripheral smear or RDT) if fever >3 days. Dengue NS1 antigen in first 5 days, IgM/IgG from day 5. Typhoid Widal test (unreliable — use culture if available). Blood culture if fever >7 days or severe illness. Treat empirically for malaria in high-transmission areas without waiting for results."
+  },
+  {
+    "id": "icmr-sepsis-001",
+    "title": "Sepsis Recognition and Management",
+    "category": "sepsis",
+    "source": "ICMR Sepsis Guidelines 2021",
+    "content": "Sepsis: life-threatening organ dysfunction caused by dysregulated host response to infection. qSOFA score ≥2 (altered mental status, RR ≥22, SBP ≤100) suggests sepsis. Action within 1 hour: blood cultures x2, IV antibiotics, IV fluids 30mL/kg crystalloid if hypotensive, check lactate. Septic shock: vasopressors needed. Mortality increases 7% per hour without antibiotics."
+  },
+  {
+    "id": "icmr-resp-001",
+    "title": "Community Acquired Pneumonia Management",
+    "category": "respiratory",
+    "source": "ICMR Respiratory Infection Guidelines 2023",
+    "content": "CAP severity: CURB-65 score (Confusion, Urea >7, RR ≥30, BP <90/60, age ≥65). Score 0-1: outpatient. Score 2: hospital. Score 3+: ICU consider. Antibiotic: Amoxicillin 500mg TDS for mild CAP. Add azithromycin if atypicals suspected. Chest X-ray to confirm. Follow-up in 6 weeks to confirm resolution. Oxygen if SpO2 <94%."
+  },
+  {
+    "id": "icmr-peds-001",
+    "title": "Paediatric Fever Management",
+    "category": "paediatric",
+    "source": "IAP/ICMR Paediatric Fever Guidelines 2023",
+    "content": "Fever in children <3 months: all require immediate evaluation and likely hospitalisation. Danger signs: lethargy, poor feeding, bulging fontanelle, neck stiffness, petechial rash (meningococcal), stridor, severe respiratory distress, cyanosis. Refer immediately. For fever alone in child >3 months without danger signs: antipyretics (paracetamol 15mg/kg), oral fluids, return if not improving in 48-72 hours."
+  },
+  {
+    "id": "icmr-amr-001",
+    "title": "Antibiotic Stewardship - Primary Care",
+    "category": "antimicrobial_resistance",
+    "source": "ICMR Antibiotic Stewardship Programme 2023",
+    "content": "Most URTIs (common cold, pharyngitis, sinusitis) are viral — antibiotics not indicated. Only prescribe antibiotics if: bacterial pneumonia, streptococcal pharyngitis (exudates + fever + LAP), UTI (symptoms + dipstick), skin and soft tissue infection. Avoid broad-spectrum antibiotics as first line. Document indication, dose, duration. Review at 48-72 hours."
+  },
+  {
+    "id": "icmr-mh-001",
+    "title": "Mental Health Screening in Primary Care",
+    "category": "mental_health",
+    "source": "ICMR Mental Health Guidelines 2022",
+    "content": "Depression screening: PHQ-9. Score ≥10 suggests moderate depression. Anxiety: GAD-7. Score ≥10 suggests moderate anxiety. Always ask about suicidal ideation if PHQ-9 question 9 positive. Refer to psychiatry if: psychosis, suicidal risk, severe depression. Primary care can initiate SSRI (sertraline 50mg OD) for moderate depression with 4-week follow-up. Counsel on sleep hygiene, exercise, social support."
+  }
+]

@@ -1,0 +1,24 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.healthRouter = void 0;
+const express_1 = require("express");
+const pinecone_service_1 = require("../services/pinecone.service");
+exports.healthRouter = (0, express_1.Router)();
+exports.healthRouter.get('/', async (_req, res) => {
+    const pineconeOk = await (0, pinecone_service_1.healthCheck)().catch(() => false);
+    const health = {
+        status: 'ok',
+        timestamp: new Date().toISOString(),
+        version: process.env.npm_package_version || '1.0.0',
+        environment: process.env.NODE_ENV,
+        services: {
+            pinecone: pineconeOk ? 'connected' : 'disconnected',
+            sarvam: process.env.SARVAM_API_KEY ? 'configured' : 'missing_key',
+            anthropic: process.env.ANTHROPIC_API_KEY ? 'configured' : 'missing_key',
+            openai: process.env.OPENAI_API_KEY ? 'configured' : 'missing_key',
+        },
+    };
+    const allHealthy = pineconeOk;
+    res.status(allHealthy ? 200 : 207).json(health);
+});
+//# sourceMappingURL=health.route.js.map

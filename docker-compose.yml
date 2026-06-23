@@ -1,0 +1,64 @@
+version: '3.9'
+
+services:
+  # ─── Backend ─────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: clinical-scribe-backend
+    ports:
+      - '3001:3001'
+    env_file:
+      - ./backend/.env
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./backend/src:/app/src
+    depends_on:
+      - chromadb
+    restart: unless-stopped
+    networks:
+      - scribe-network
+
+  # ─── Frontend ────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: clinical-scribe-frontend
+    ports:
+      - '5173:5173'
+    env_file:
+      - ./frontend/.env
+    volumes:
+      - ./frontend/src:/app/src
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - scribe-network
+
+  # ─── ChromaDB (local dev only) ────────────────────────────
+  # In production, use Pinecone (managed). ChromaDB for local testing.
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: clinical-scribe-chromadb
+    ports:
+      - '8000:8000'
+    volumes:
+      - chromadb_data:/chroma/chroma
+    environment:
+      - ALLOW_RESET=true
+      - ANONYMIZED_TELEMETRY=false
+    restart: unless-stopped
+    networks:
+      - scribe-network
+
+volumes:
+  chromadb_data:
+    driver: local
+
+networks:
+  scribe-network:
+    driver: bridge

@@ -1,0 +1,82 @@
+[
+  {
+    "id": "rf-cardiac-001",
+    "symptom_pattern": "chest pain sweating radiation arm jaw",
+    "risk_level": "critical",
+    "category": "cardiac",
+    "escalation_message": "Possible STEMI/ACS pattern. Do not delay — perform 12-lead ECG immediately. Activate cardiac protocol. Call emergency services if ECG confirms MI. Time-to-balloon < 90 minutes is target.",
+    "content": "CARDIAC RED FLAG: Chest pain with diaphoresis and radiation to left arm or jaw is a classical acute coronary syndrome presentation. In Indian primary care settings, this requires immediate ECG, aspirin 300mg loading dose (if no contraindication), and emergency transfer. Do not discharge without ruling out ACS."
+  },
+  {
+    "id": "rf-cardiac-002",
+    "symptom_pattern": "palpitations syncope faint loss consciousness",
+    "risk_level": "high",
+    "category": "cardiac",
+    "escalation_message": "Palpitations with syncope — high risk of ventricular arrhythmia. Urgent ECG and cardiac monitoring needed. Do not allow patient to leave unaccompanied.",
+    "content": "CARDIAC RED FLAG: Palpitations associated with syncope or pre-syncope suggest potentially life-threatening arrhythmia (VT, WPW, long QT). ECG is mandatory. If ECG shows wide complex tachycardia, treat as VT until proven otherwise."
+  },
+  {
+    "id": "rf-stroke-001",
+    "symptom_pattern": "facial droop arm weakness speech difficulty sudden",
+    "risk_level": "critical",
+    "category": "stroke",
+    "escalation_message": "FAST positive — probable acute stroke. Time is brain. Call emergency services immediately. Target: thrombolysis within 4.5 hours of symptom onset. Do NOT give aspirin until haemorrhagic stroke excluded by CT.",
+    "content": "STROKE RED FLAG: FAST criteria — Facial drooping, Arm weakness, Speech difficulty, Time to call emergency services. In India, stroke is the 2nd leading cause of death. Thrombolysis window is 4.5 hours. Immediate CT brain required to exclude haemorrhage before any antiplatelet or anticoagulant therapy."
+  },
+  {
+    "id": "rf-stroke-002",
+    "symptom_pattern": "worst headache life thunderclap sudden severe headache",
+    "risk_level": "critical",
+    "category": "stroke",
+    "escalation_message": "Thunderclap headache — subarachnoid haemorrhage until proven otherwise. Emergency CT head without contrast. If CT negative within 6 hours: LP to detect xanthochromia. Do NOT discharge.",
+    "content": "STROKE RED FLAG: Sudden onset worst headache of life ('thunderclap') is subarachnoid haemorrhage (SAH) until proven otherwise. SAH has 50% mortality without intervention. Emergency neurosurgical referral required."
+  },
+  {
+    "id": "rf-respiratory-001",
+    "symptom_pattern": "spo2 oxygen saturation low breathing difficulty tachypnoea",
+    "risk_level": "high",
+    "category": "respiratory",
+    "escalation_message": "SpO₂ < 94% requires immediate oxygen therapy. Identify cause — pneumonia, pulmonary embolism, acute asthma, COPD exacerbation. Emergency management if SpO₂ < 90% despite oxygen.",
+    "content": "RESPIRATORY RED FLAG: SpO₂ < 94% on room air requires immediate intervention. SpO₂ < 90% is a medical emergency. Causes: pneumonia, PE, pneumothorax, acute severe asthma, COPD exacerbation. Apply oxygen 2-4L/min via nasal prongs. Arrange emergency transfer if not improving."
+  },
+  {
+    "id": "rf-respiratory-002",
+    "symptom_pattern": "stridor wheeze severe respiratory distress accessory muscles",
+    "risk_level": "critical",
+    "category": "respiratory",
+    "escalation_message": "Stridor suggests upper airway obstruction — anaphylaxis, epiglottitis, or foreign body. This is immediately life-threatening. Call emergency services. Prepare for airway management.",
+    "content": "RESPIRATORY RED FLAG: Stridor is a sign of upper airway obstruction. This is a critical emergency. In anaphylaxis: adrenaline 0.5mg IM immediately. In epiglottitis: do not examine throat — maintain sitting position, immediate ENT/anaesthesia referral. In foreign body: back blows + abdominal thrusts."
+  },
+  {
+    "id": "rf-sepsis-001",
+    "symptom_pattern": "fever confusion altered sensorium tachycardia hypotension",
+    "risk_level": "critical",
+    "category": "sepsis",
+    "escalation_message": "Sepsis suspected — qSOFA ≥2. Initiate Sepsis Bundle within 1 hour: blood cultures, IV antibiotics, IV fluids, lactate. Mortality increases 7% per hour without antibiotics.",
+    "content": "SEPSIS RED FLAG: qSOFA criteria (≥2 = high risk): (1) RR ≥22/min, (2) altered mentation, (3) SBP ≤100 mmHg. If sepsis suspected: blood cultures x2 peripherally, IV piperacillin-tazobactam (or local protocol), IV crystalloid 30mL/kg if hypotensive, check lactate. Septic shock = vasopressors needed = ICU."
+  },
+  {
+    "id": "rf-paediatric-001",
+    "symptom_pattern": "child fever neck stiffness rash petechiae meningism",
+    "risk_level": "critical",
+    "category": "pediatric",
+    "escalation_message": "Bacterial meningitis suspected. Immediate IV ceftriaxone (do not wait for LP if CSF access delayed). Emergency transfer. IV dexamethasone reduces neurological complications.",
+    "content": "PAEDIATRIC RED FLAG: Fever + neck stiffness + photophobia = bacterial meningitis until proven otherwise. Petechial/purpuric rash suggests meningococcal septicaemia — immediately life-threatening. Give ceftriaxone 80mg/kg IV before transfer. Golden hour principle applies."
+  },
+  {
+    "id": "rf-paediatric-002",
+    "symptom_pattern": "child breathlessness tachypnoea grunting nasal flaring",
+    "risk_level": "high",
+    "category": "pediatric",
+    "escalation_message": "Respiratory distress in child — assess WHO severity. Severe: grunting + retractions + cyanosis = immediate oxygen + emergency transfer. Pneumonia: antibiotics within 1 hour.",
+    "content": "PAEDIATRIC RED FLAG: WHO severity classification for child respiratory illness. Fast breathing thresholds: <2 months ≥60/min; 2-12 months ≥50/min; 1-5 years ≥40/min. Danger signs: grunting, severe chest indrawing, cyanosis, unable to drink — all require emergency management."
+  },
+  {
+    "id": "rf-obstetric-001",
+    "symptom_pattern": "pregnant headache vision blurred swelling hypertension",
+    "risk_level": "critical",
+    "category": "other",
+    "escalation_message": "Pre-eclampsia/eclampsia suspected. Check BP urgently. If BP >160/110 with symptoms: IV magnesium sulphate + antihypertensives + emergency obstetric referral. Do not delay.",
+    "content": "OBSTETRIC RED FLAG: Hypertension in pregnancy + headache + visual disturbance + oedema = pre-eclampsia. If seizures occur = eclampsia. Management: IV MgSO4 4g loading dose, labetalol or hydralazine for severe hypertension, emergency delivery planning. Leading cause of maternal mortality in India."
+  }
+]

@@ -1,0 +1,31 @@
+drug_a,drug_b,severity,mechanism,recommendation,source
+warfarin,aspirin,Critical,Additive anticoagulant effect + GI mucosal damage,Avoid combination unless under specialist supervision. Monitor INR closely if unavoidable. Use gastroprotection.,British National Formulary
+warfarin,ibuprofen,Critical,NSAID inhibits platelet function + displaces warfarin from protein binding,Avoid. Use paracetamol for pain relief in warfarin patients.,ICMR Drug Safety
+warfarin,metronidazole,Major,Metronidazole inhibits CYP2C9 increasing warfarin levels significantly,Reduce warfarin dose by 30-50%. Monitor INR every 2-3 days during course.,BNF
+metformin,contrast_dye,Major,Risk of lactic acidosis due to acute kidney injury from contrast,Hold metformin 48 hours before IV contrast. Restart only after renal function confirmed normal.,ADA Guidelines
+amlodipine,simvastatin,Major,Amlodipine inhibits CYP3A4 increasing simvastatin plasma levels,Cap simvastatin at 20mg/day when co-prescribed with amlodipine. Consider switching to rosuvastatin.,FDA Drug Safety
+clarithromycin,simvastatin,Critical,Strong CYP3A4 inhibition causes massive statin accumulation,Contraindicated. Stop simvastatin during clarithromycin course. Resume after 48 hours.,MHRA
+clarithromycin,atorvastatin,Major,CYP3A4 inhibition increases atorvastatin levels,Temporarily stop atorvastatin during clarithromycin course.,EMA
+methotrexate,ibuprofen,Critical,NSAIDs reduce methotrexate renal clearance causing toxicity,Avoid NSAIDs in patients on methotrexate. Use paracetamol. If unavoidable: short course with monitoring.,ICMR Rheumatology
+ciprofloxacin,antacids,Major,Antacids chelate fluoroquinolones reducing absorption by 50-90%,Separate administration by 2 hours. Give ciprofloxacin 2h before or 6h after antacid.,Pharmacokinetic interaction
+digoxin,amiodarone,Critical,Amiodarone inhibits P-glycoprotein and renal digoxin clearance,Reduce digoxin dose by 50% when starting amiodarone. Monitor digoxin levels and ECG.,ESC Guidelines
+lithium,ibuprofen,Major,NSAIDs reduce renal lithium clearance causing toxicity,Avoid NSAIDs in patients on lithium. Use paracetamol. Monitor lithium levels if NSAID unavoidable.,Psychiatry Safety
+enalapril,potassium_supplements,Major,Dual RAAS blockade causes dangerous hyperkalaemia,Avoid routine potassium supplementation in ACE inhibitor patients. Monitor electrolytes.,Cardiology Guidelines
+metformin,alcohol,Moderate,Potentiates lactic acidosis risk,Advise against heavy alcohol use. Moderate drinking (1-2 units) generally acceptable.,ICMR
+furosemide,gentamicin,Major,Additive ototoxicity and nephrotoxicity,Avoid combination. If unavoidable: monitor renal function and audiometry.,Hospital Formulary
+carbamazepine,oral_contraceptive,Major,Enzyme induction reduces OCP efficacy,Counsel on contraceptive failure risk. Use alternative non-hormonal contraception or higher-dose OCP.,FIGO Guidelines
+fluoxetine,tramadol,Major,Serotonin syndrome risk + SSRI inhibits tramadol activation via CYP2D6,Avoid combination. Use opioid alternatives. If unavoidable: monitor closely for serotonin syndrome signs.,Pharmacovigilance
+aspirin,clopidogrel,Major,Dual antiplatelet therapy significantly increases bleeding risk,Only co-prescribe under cardiology guidance (post-ACS). Do not prescribe routinely in primary care.,ACC/AHA
+amlodipine,rifampicin,Major,Rifampicin strongly induces CYP3A4 reducing amlodipine efficacy,Expect significant BP increase. Monitor BP closely. May need dose adjustment or drug switch.,TB Treatment Guidelines
+ciprofloxacin,warfarin,Major,Ciprofloxacin inhibits warfarin metabolism via CYP1A2,Monitor INR within 3-5 days of starting ciprofloxacin. Anticipate INR rise of 30-50%.,BNF
+phenytoin,antacids,Moderate,Antacids reduce phenytoin absorption,Separate phenytoin and antacid administration by 2-3 hours.,Neurology Guidelines
+metformin,trimethoprim,Moderate,Trimethoprim inhibits renal creatinine secretion falsely elevating creatinine,Monitor renal function when prescribing trimethoprim to metformin patients.,NICE Guidelines
+atenolol,verapamil,Critical,Combined negative chronotropic and inotropic effect: severe bradycardia and heart block,Contraindicated in combination. Never co-prescribe without specialist supervision.,ESC
+ramipril,spironolactone,Major,Dual RAAS: severe hyperkalaemia risk,Avoid in primary care without specialist input and close electrolyte monitoring.,NICE Heart Failure Guidelines
+glibenclamide,fluconazole,Major,Fluconazole inhibits CYP2C9 increasing sulphonylurea levels: hypoglycaemia risk,Monitor blood glucose closely. Consider temporary dose reduction of glibenclamide.,WHO Drug Interactions
+nitrates,sildenafil,Critical,Profound hypotension — potentially fatal,Absolute contraindication. Sildenafil must not be taken within 24 hours of nitrates.,Cardiology Guidelines
+opioids,benzodiazepines,Critical,Additive CNS and respiratory depression: risk of fatal respiratory arrest,Avoid combination whenever possible. If required: use lowest effective doses. Patient must be counselled.,FDA Black Box Warning
+warfarin,fluconazole,Critical,Fluconazole strongly inhibits CYP2C9 causing marked INR elevation,Monitor INR within 2-3 days. Expect 50-100% INR rise. Reduce warfarin dose proactively.,BNF
+tetracycline,milk_dairy,Moderate,Calcium chelation reduces tetracycline absorption by 50-80%,Take tetracycline 1 hour before or 2 hours after dairy products.,Basic Pharmacokinetics
+SSRIs,NSAIDs,Major,Serotonin impairs platelet aggregation + NSAID GI mucosal damage: GI bleed risk,Avoid combination if possible. Add PPI gastroprotection if combination unavoidable.,MHRA Drug Safety
+methotrexate,trimethoprim,Critical,Both are folate antagonists: combined bone marrow suppression and mucositis,Contraindicated. Use alternative antibiotics in patients on methotrexate.,ICMR Oncology
