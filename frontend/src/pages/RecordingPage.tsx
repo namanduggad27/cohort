@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { useAudioRecorder } from '../hooks/useAudioRecorder';
 import { uploadConsultationAudio } from '../services/api';
-import { MOCK_PATIENTS } from './QueuePage';
+import { getPatientById } from '../services/patientStore';
 import { RedFlagPopup } from '../components/RedFlagPopup';
 
 interface SimulatedLine {
@@ -26,45 +26,54 @@ interface SimulatedLine {
 // Simulated dialogues for each patient case
 const SIMULATION_SCRIPTS: Record<string, SimulatedLine[]> = {
   'pat-001': [
-    { time: 2, speaker: 'Doctor', text: 'नमस्कार राजीव जी, क्या तकलीफ है आज?' },
-    { time: 7, speaker: 'Patient', text: 'जी डॉक्टर साहब, कल रात से छाती में बाईं तरफ बहुत तेज दर्द हो रहा है... sharp pain in left chest, and sweating a lot.' },
-    { time: 13, speaker: 'Patient', text: 'और यह दर्द धीरे-धीरे मेरे बाएं हाथ की तरफ जा रहा है। सांस लेने में भी थोड़ी तकलीफ हो रही है।' },
-    { time: 18, speaker: 'Patient', text: 'छाती में बहुत भारीपन लग रहा है डॉक्टर साहब।', triggerRedFlag: true },
-    { time: 24, speaker: 'Doctor', text: 'यह दर्द कब से है राजीव जी? क्या कल रात 10 बजे से है?' },
-    { time: 29, speaker: 'Patient', text: 'हाँ डॉक्टर साहब, करीब कल रात 10 बजे खाना खाने के बाद शुरू हुआ था।' },
-    { time: 35, speaker: 'Doctor', text: 'क्या आपको घबराहट या उल्टी जैसा महसूस हो रहा है?' },
-    { time: 40, speaker: 'Patient', text: 'हाँ डॉक्टर साहब, बहुत पसीना आ रहा है और घबराहट बहुत ज्यादा हो रही है।' }
+    { time: 2, speaker: 'Doctor', text: 'Namaste Rajiv ji, bataiye aaj kya takleef ho rahi hai?' },
+    { time: 7, speaker: 'Patient', text: 'Ji Doctor sahab, kal raat se chest mein left side bohot tej dard ho raha hai... sharp pain in left chest, and sweating a lot.' },
+    { time: 13, speaker: 'Patient', text: 'Aur yeh pain dheere dheere mere left arm ki taraf radiate ho raha hai. Saans lene mein bhi thodi problem ho rahi hai.' },
+    { time: 18, speaker: 'Patient', text: 'Chest mein bohot heaviness aur tightness lag rahi hai Doctor sahab.', triggerRedFlag: true },
+    { time: 24, speaker: 'Doctor', text: 'Yeh pain kab se hai Rajiv ji? Kya kal raat 10 baje se shuru hua tha?' },
+    { time: 29, speaker: 'Patient', text: 'Haan Doctor sahab, karib kal raat 10 baje dinner ke baad shuru hua tha.' },
+    { time: 35, speaker: 'Doctor', text: 'Kya aapko ghabrahat ya vomiting jaisa feel ho raha hai?' },
+    { time: 40, speaker: 'Patient', text: 'Haan Doctor sahab, bohot pasina aa raha hai aur ghabrahat bohot jyada ho rahi hai.' }
   ],
   'pat-002': [
-    { time: 2, speaker: 'Doctor', text: 'सुनीता जी, कहिये क्या परेशानी है?' },
-    { time: 7, speaker: 'Patient', text: 'डॉक्टर साहब, मुझे दो-तीन दिन से बहुत तेज सिरदर्द हो रहा है और बहुत ज्यादा बुखार है। मुझे ५ महीने का गर्भ भी है।' },
-    { time: 13, speaker: 'Doctor', text: 'बुखार कितना है सुनीता जी? आपने नापा था क्या?' },
-    { time: 18, speaker: 'Patient', text: 'जी डॉक्टर साहब, कल रात 102.2 नापा था। आँखों के सामने धुंधलापन भी लग रहा है।' },
-    { time: 24, speaker: 'Patient', text: 'और सिर बहुत जोर से फट रहा है।', triggerRedFlag: true },
-    { time: 30, speaker: 'Doctor', text: 'क्या आपके पैरों में सूजन है?' },
-    { time: 35, speaker: 'Patient', text: 'हाँ डॉक्टर साहब, कल से थोड़े सूजे हुए लग रहे हैं।' }
+    { time: 2, speaker: 'Doctor', text: 'Sunita ji, bataiye kya pareshani hai?' },
+    { time: 7, speaker: 'Patient', text: 'Doctor sahab, mujhe 2-3 din se bohot tej headache ho raha hai aur high fever hai. Main 5 months pregnant bhi hoon.' },
+    { time: 13, speaker: 'Doctor', text: 'Fever kitna hai Sunita ji? Aapne thermometer se check kiya tha kya?' },
+    { time: 18, speaker: 'Patient', text: 'Ji Doctor sahab, kal raat 102.2 check kiya tha. Aankhon ke saamne thoda blurriness aur dhundhlapan bhi lag raha hai.' },
+    { time: 24, speaker: 'Patient', text: 'Aur sir bohot zor se phat raha hai, severe headache hai.', triggerRedFlag: true },
+    { time: 30, speaker: 'Doctor', text: 'Kya aapke feet aur pairon mein swelling ya sujan hai?' },
+    { time: 35, speaker: 'Patient', text: 'Haan Doctor sahab, kal se dono feet thode swollen lag rahe hain.' }
   ],
   'pat-003': [
-    { time: 2, speaker: 'Doctor', text: 'अमित जी, नमस्ते। क्या हाल है? शुगर ठीक चल रही है?' },
-    { time: 8, speaker: 'Patient', text: 'डॉक्टर साहब, शुगर की दवाई तो ठीक चल रही है, लेकिन कल से पैरों और घुटनों में बहुत दर्द है। बदन दर्द के लिए कोई पेनकिलर लिख दीजिये।' },
-    { time: 15, speaker: 'Doctor', text: 'अमित जी, आप पहले से कौन सी दवाइयां ले रहे हैं?' },
-    { time: 21, speaker: 'Patient', text: 'मैं Metformin 500mg और Atorvastatin लेता हूँ। और वो खून पतला करने वाली गोली... warfarin 2mg भी चल रही है।' },
-    { time: 28, speaker: 'Doctor', text: 'वारफारिन के साथ एस्पिरिन या ब्रूफेन (NSAID) नहीं ले सकते क्योंकि इससे पेट में ब्लीडिंग हो सकती है।' }
+    { time: 2, speaker: 'Doctor', text: 'Amit ji, Namaste. Kya haal hai? Sugar aur BP theek chal raha hai?' },
+    { time: 8, speaker: 'Patient', text: 'Doctor sahab, sugar ki medicine toh theek chal rahi hai, lekin kal se legs aur knees mein bohot pain hai. Badan dard ke liye koi strong painkiller likh dijiye.' },
+    { time: 15, speaker: 'Doctor', text: 'Amit ji, aap pehle se kaun kaun si medicines le rahe hain regular?' },
+    { time: 21, speaker: 'Patient', text: 'Main Metformin 500mg aur Atorvastatin leta hoon. Aur woh blood thinner wali tablet... Warfarin 2mg bhi chal rahi hai.' },
+    { time: 28, speaker: 'Doctor', text: 'Warfarin ke saath Aspirin ya Brufen (NSAIDs) bilkul nahi le sakte, isse stomach bleeding ka risk rehta hai.' }
   ],
   'pat-004': [
-    { time: 2, speaker: 'Doctor', text: 'नमस्ते जी, बच्चे को क्या तकलीफ है?' },
-    { time: 7, speaker: 'Patient', text: 'डॉक्टर साहब, आरव को कल रात से बहुत तेज बुखार है... 103.5 बुखार है। कुछ खा-पी नहीं रहा है।' },
-    { time: 13, speaker: 'Patient', text: 'जो भी दूध पिलाती हूँ सब उल्टी कर देता है। और कल से बहुत सुस्त हो गया है, रो भी नहीं पा रहा।' },
-    { time: 19, speaker: 'Patient', text: 'सुस्त होकर बस सोता रहता है और आंखें भी नहीं खोल रहा।', triggerRedFlag: true },
-    { time: 25, speaker: 'Doctor', text: 'क्या बच्चे की सांस तेज चल रही है?' },
-    { time: 30, speaker: 'Patient', text: 'हाँ डॉक्टर साहब, बहुत तेज-तेज सांस ले रहा है और छाती भी धंस रही है।' }
+    { time: 2, speaker: 'Doctor', text: 'Namaste ji, bacche ko kya takleef ho rahi hai?' },
+    { time: 7, speaker: 'Patient', text: 'Doctor sahab, Aarav ko kal raat se bohot tej fever hai... 103.5 fever hai. Kuch kha pee nahi raha hai.' },
+    { time: 13, speaker: 'Patient', text: 'Jo bhi milk pilati hoon sab vomit kar deta hai. Aur kal se bohot dull aur lethargic ho gaya hai, ro bhi nahi pa raha.' },
+    { time: 19, speaker: 'Patient', text: 'Bohot lethargic hokar bas sota rehta hai aur aankhein bhi nahi khol raha.', triggerRedFlag: true },
+    { time: 25, speaker: 'Doctor', text: 'Kya bacche ki saans bohot fast chal rahi hai?' },
+    { time: 30, speaker: 'Patient', text: 'Haan Doctor sahab, bohot tej tej saans le raha hai aur chest bhi andar dhans rahi hai.' }
   ]
 };
+
+const DEFAULT_SIMULATION_SCRIPT: SimulatedLine[] = [
+  { time: 2, speaker: 'Doctor', text: 'Namaste ji, bataiye aaj kya takleef ho rahi hai?' },
+  { time: 7, speaker: 'Patient', text: 'Doctor sahab, pichle 2-3 din se bohot tej fever aur sar dard (headache) ho raha hai.' },
+  { time: 13, speaker: 'Patient', text: 'Saath mein badan dard (body ache) aur kamzori (weakness) bhi lag rahi hai. Kuch khane ka mann nahi kar raha.' },
+  { time: 18, speaker: 'Doctor', text: 'Accha, koi cough ya throat pain toh nahi hai? Aur temperature kitna check kiya tha?' },
+  { time: 24, speaker: 'Patient', text: 'Kal raat 101.5 fever check kiya tha Doctor sahab. Cough thoda bohot hai.' },
+  { time: 30, speaker: 'Doctor', text: 'Theek hai, darne ki koi baat nahi. Main vitals check karke kuch medicines likh deta hoon.' }
+];
 
 export function RecordingPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const patient = MOCK_PATIENTS.find(p => p.id === id);
+  const patient = id ? getPatientById(id) : undefined;
 
   const recorder = useAudioRecorder();
   const [isSimulating, setIsSimulating] = useState(false);
@@ -82,6 +91,13 @@ export function RecordingPage() {
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const tickerEndRef = useRef<HTMLDivElement | null>(null);
+  const recognitionRef = useRef<any>(null);
+
+  useEffect(() => {
+    return () => {
+      if (recognitionRef.current) recognitionRef.current.stop();
+    };
+  }, []);
 
   useEffect(() => {
     if (!patient) {
@@ -102,7 +118,7 @@ export function RecordingPage() {
           const nextTime = prev + 1;
           
           // Check if there are lines corresponding to nextTime
-          const script = SIMULATION_SCRIPTS[patient?.id || ''] || [];
+          const script = SIMULATION_SCRIPTS[patient?.id || ''] || DEFAULT_SIMULATION_SCRIPT;
           const currentLine = script.find(line => line.time === nextTime);
           
           if (currentLine) {
@@ -113,19 +129,19 @@ export function RecordingPage() {
               if (patient?.id === 'pat-001') {
                 setActiveRedFlag({
                   type: 'CARDIAC',
-                  triggeringText: 'जी डॉक्टर साहब, कल रात से छाती में बाईं तरफ बहुत तेज दर्द हो रहा है... sharp pain in left chest, and sweating a lot.',
+                  triggeringText: 'Ji Doctor sahab, kal raat se chest mein left side bohot tej dard ho raha hai... sharp pain in left chest, and sweating a lot.',
                   escalationMessage: 'Possible STEMI/ACS pattern. Immediate ECG required. Transfer to cardiac center.'
                 });
               } else if (patient?.id === 'pat-002') {
                 setActiveRedFlag({
                   type: 'PRE-ECLAMPSIA',
-                  triggeringText: 'मुझे ५ महीने का गर्भ भी है... तेज सिरदर्द... आँखों के सामने धुंधलापन',
+                  triggeringText: 'Main 5 months pregnant bhi hoon... severe headache... aankhon ke saamne blurriness',
                   escalationMessage: 'Elevated BP (150/95) with pre-eclamptic warning signs (severe headache, edema, vision changes) in a 20-week pregnancy. Immediate OB-GYN evaluation required.'
                 });
               } else if (patient?.id === 'pat-004') {
                 setActiveRedFlag({
                   type: 'PEDIATRIC SEVERE ILLNESS',
-                  triggeringText: '103.5 बुखार... कुछ खा-पी नहीं रहा... उल्टी कर देता है... बहुत सुस्त हो गया है... तेज सांस ले रहा है',
+                  triggeringText: '103.5 fever... kuch kha pee nahi raha... sab vomit kar deta hai... bohot lethargic ho gaya hai... tej saans le raha hai',
                   escalationMessage: 'Integrated Management of Neonatal & Childhood Illness (IMNCI) guidelines trigger: Child is lethargic, vomiting everything, and has tachypnea. Urgent fluid resuscitation and antibiotic administration. Refer to PICU immediately.'
                 });
               }
@@ -155,13 +171,52 @@ export function RecordingPage() {
 
   const handleStartRealRecording = async () => {
     setIsSimulating(false);
-    setTickerLines([]);
+    setTickerLines([{ speaker: 'System', text: '🎙️ Live Microphone Active. Listening for speech stream...' }]);
     setSimulatedTime(0);
     setErrorMsg(null);
     await recorder.startRecording();
+
+    try {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        if (recognitionRef.current) recognitionRef.current.stop();
+        const recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-IN';
+
+        recognition.onresult = (event: any) => {
+          const results = Array.from(event.results);
+          const latestResult = results[results.length - 1] as any;
+          const transcript = latestResult[0].transcript.trim();
+          if (transcript) {
+            setTickerLines(prev => {
+              const withoutInterim = prev.filter(l => !l.text.startsWith('⏳'));
+              if (latestResult.isFinal) {
+                return [...withoutInterim, { speaker: 'Patient/Doc', text: transcript }];
+              } else {
+                return [...withoutInterim, { speaker: 'Patient/Doc', text: `⏳ ${transcript}...` }];
+              }
+            });
+          }
+        };
+
+        recognition.onerror = () => {};
+        recognition.start();
+        recognitionRef.current = recognition;
+      } else {
+        setTickerLines(prev => [...prev, { speaker: 'System', text: 'ℹ️ Live browser preview not available. Full audio will be transcribed by Groq Whisper when stopped.' }]);
+      }
+    } catch (e) {
+      console.warn('Speech preview start failed:', e);
+    }
   };
 
   const handleStartSimulation = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      recognitionRef.current = null;
+    }
     recorder.resetRecording();
     setIsSimulating(true);
     setTickerLines([{ speaker: 'System', text: '⚡ Simulated Hinglish Consultation Stream Initialized.' }]);
@@ -172,39 +227,37 @@ export function RecordingPage() {
   const handleStop = async () => {
     setProcessing(true);
     setErrorMsg(null);
-
-    let audioBlobToSend: Blob | null = recorder.audioBlob;
-    
-    if (isSimulating) {
-      setIsSimulating(false);
-      if (timerRef.current) clearInterval(timerRef.current);
-      
-      // For simulated runs, we send a small dummy blob to trigger the pipeline in the backend
-      audioBlobToSend = new Blob([new Uint8Array([1, 2, 3, 4])], { type: 'audio/webm' });
-    } else {
-      recorder.stopRecording();
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      recognitionRef.current = null;
     }
 
-    // Wait slightly to let the recorder finalize its state
-    setTimeout(async () => {
-      try {
-        const targetBlob = audioBlobToSend || recorder.audioBlob;
-        if (!targetBlob) {
-          throw new Error("No audio content available to process. Please record or run simulation first.");
-        }
-        
-        const response = await uploadConsultationAudio(
-          targetBlob,
-          patient.id,
-          'doc-101' // Mock Doc ID
-        );
-        
-        navigate(`/consult/${response.consultation.id}/review`);
-      } catch (err) {
-        setErrorMsg(err instanceof Error ? err.message : 'Processing failed. Check API connectivity.');
-        setProcessing(false);
+    try {
+      let targetBlob: Blob | null = null;
+      
+      if (isSimulating) {
+        setIsSimulating(false);
+        if (timerRef.current) clearInterval(timerRef.current);
+        targetBlob = new Blob([new Uint8Array([1, 2, 3, 4])], { type: 'audio/webm' });
+      } else {
+        targetBlob = await recorder.stopRecording();
       }
-    }, 800);
+
+      if (!targetBlob || targetBlob.size === 0) {
+        throw new Error("No audio content available to process. Please record or run simulation first.");
+      }
+
+      const response = await uploadConsultationAudio(
+        targetBlob,
+        patient.id,
+        'doc-101' // Mock Doc ID
+      );
+      
+      navigate(`/consult/${response.consultation.id}/review`);
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : 'Processing failed. Check API connectivity.');
+      setProcessing(false);
+    }
   };
 
   const handleAcknowledgeRedFlag = () => {

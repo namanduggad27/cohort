@@ -25,6 +25,14 @@ export async function generateEmbeddings(
 ): Promise<{ embeddings: number[][]; tokenCount: number }> {
   if (texts.length === 0) return { embeddings: [], tokenCount: 0 };
 
+  if (!process.env.OPENAI_API_KEY) {
+    logger.info('OPENAI_API_KEY not set, using mock 1536-d zero embeddings', { requestId });
+    return {
+      embeddings: texts.map(() => new Array(1536).fill(0)),
+      tokenCount: 0,
+    };
+  }
+
   logger.info('Embedding: Generating', {
     requestId,
     count: texts.length,

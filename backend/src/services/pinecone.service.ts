@@ -58,6 +58,11 @@ export async function queryNamespace(
   topK = 3,
   similarityThreshold = 0.75
 ): Promise<QueryResult[]> {
+  if (!process.env.PINECONE_API_KEY) {
+    logger.info('PINECONE_API_KEY not set, returning empty RAG context matches');
+    return [];
+  }
+
   const index = getPineconeIndex().namespace(namespace);
 
   const response = await index.query({
@@ -90,6 +95,7 @@ export async function queryNamespace(
  * Check if the Pinecone index is reachable.
  */
 export async function healthCheck(): Promise<boolean> {
+  if (!process.env.PINECONE_API_KEY) return true;
   try {
     const client = getPineconeClient();
     const indexes = await client.listIndexes();

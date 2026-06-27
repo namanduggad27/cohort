@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Users, 
@@ -7,110 +7,61 @@ import {
   Activity, 
   Thermometer, 
   Heart, 
-  ShieldAlert 
+  ShieldAlert,
+  Plus,
+  X,
+  UserPlus
 } from 'lucide-react';
 import type { Patient } from '../types/consultation.types';
+import { INITIAL_PATIENTS, getPatientQueue, addPatientToQueue } from '../services/patientStore';
 
-// Mock Patient Data for Indian Primary Care Demo
-export const MOCK_PATIENTS: Patient[] = [
-  {
-    id: 'pat-001',
-    name: 'Rajiv Sharma',
-    age: 48,
-    sex: 'M',
-    vitals: {
-      bp: '162/98',
-      temp: '98.4°F',
-      pulse: '88 bpm',
-      spo2: '97%',
-      weight: '76 kg'
-    },
-    allergies: ['Penicillin'],
-    activeMedications: ['Amlodipine 5mg OD'],
-    pastVisits: [
-      {
-        date: '2026-04-12',
-        diagnosis: 'Essential Hypertension',
-        medications: ['Amlodipine 5mg OD']
-      }
-    ],
-    waitingSince: '10:45 AM',
-    priority: 'urgent'
-  },
-  {
-    id: 'pat-002',
-    name: 'Sunita Devi',
-    age: 34,
-    sex: 'F',
-    vitals: {
-      bp: '110/70',
-      temp: '102.2°F',
-      pulse: '104 bpm',
-      spo2: '95%',
-      weight: '54 kg'
-    },
-    allergies: [],
-    activeMedications: [],
-    pastVisits: [],
-    waitingSince: '10:55 AM',
-    priority: 'critical' // High fever and tachycardia
-  },
-  {
-    id: 'pat-003',
-    name: 'Amit Patel',
-    age: 65,
-    sex: 'M',
-    vitals: {
-      bp: '132/82',
-      temp: '98.6°F',
-      pulse: '72 bpm',
-      spo2: '98%',
-      weight: '68 kg'
-    },
-    allergies: ['Sulfa drugs'],
-    activeMedications: ['Metformin 500mg BD', 'Atorvastatin 10mg HS'],
-    pastVisits: [
-      {
-        date: '2026-03-01',
-        diagnosis: 'Type 2 Diabetes Mellitus',
-        medications: ['Metformin 500mg BD']
-      }
-    ],
-    waitingSince: '11:05 AM',
-    priority: 'normal'
-  },
-  {
-    id: 'pat-004',
-    name: 'Baby Aarav',
-    age: 2, // 2 years old
-    sex: 'M',
-    vitals: {
-      bp: '90/60',
-      temp: '103.5°F',
-      pulse: '128 bpm',
-      spo2: '94%',
-      weight: '12 kg'
-    },
-    allergies: [],
-    activeMedications: ['Paracetamol Syrup as needed'],
-    pastVisits: [
-      {
-        date: '2026-05-20',
-        diagnosis: 'Acute Otitis Media',
-        medications: ['Amoxicillin Syrup']
-      }
-    ],
-    waitingSince: '11:15 AM',
-    priority: 'critical' // Pediatric high fever
-  }
-];
+export const MOCK_PATIENTS: Patient[] = INITIAL_PATIENTS;
 
 export function QueuePage() {
   const navigate = useNavigate();
-  const [patients] = useState<Patient[]>(MOCK_PATIENTS);
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [showAddModal, setShowAddModal] = useState(false);
 
-  const getPriorityBadgeClass = (priority: Patient['priority']) => {
-    switch (priority) {
+  // New patient form state
+  const [name, setName] = useState('');
+  const [age, setAge] = useState('35');
+  const [sex, setSex] = useState<'M' | 'F' | 'Other'>('M');
+  const [priority, setPriority] = useState<'normal' | 'urgent' | 'critical'>('normal');
+  const [bp, setBp] = useState('120/80');
+  const [temp, setTemp] = useState('98.6°F');
+  const [pulse, setPulse] = useState('74 bpm');
+  const [spo2, setSpo2] = useState('98%');
+  const [weight, setWeight] = useState('65 kg');
+  const [symptomSummary, setSymptomSummary] = useState('');
+
+  useEffect(() => {
+    setPatients(getPatientQueue());
+  }, []);
+
+  const handleAddPatient = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim()) return;
+
+    addPatientToQueue({
+      name: name.trim(),
+      age: parseInt(age) || 30,
+      sex,
+      priority,
+      vitals: { bp, temp, pulse, spo2, weight },
+      allergies: [],
+      activeMedications: [],
+      pastVisits: symptomSummary ? [{ date: new Date().toISOString().slice(0, 10), diagnosis: symptomSummary, medications: [] }] : []
+    });
+
+    setPatients(getPatientQueue());
+    setShowAddModal(false);
+    // Reset form
+    setName('');
+    setSymptomSummary('');
+  };
+
+  const getPriorityBadgeClass = (prio: Patient['priority']) => {
+    switch (prio) {
       case 'critical': return 'badge-critical';
       case 'urgent': return 'badge-warning';
       default: return 'badge-success';
@@ -123,12 +74,12 @@ export function QueuePage() {
   return (
     <div className="app-container">
       {/* Header Stat Row */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1 style={{ margin: 0, fontSize: '2.25rem', fontWeight: 800, letterSpacing: '-0.03em' }}>Doctor's Consultation Queue</h1>
           <p style={{ color: 'var(--text-muted)' }}>Indian Primary Care Safety-First Triage Panel</p>
         </div>
-        <div style={{ display: 'flex', gap: '1rem' }}>
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
           <div className="card" style={{ padding: '0.75rem 1.25rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <Users size={20} className="logo-icon" />
             <div>
@@ -136,13 +87,24 @@ export function QueuePage() {
               <div style={{ fontSize: '1.25rem', fontWeight: 700 }}>{patients.length} Patients</div>
             </div>
           </div>
+
           <button 
-            className="btn btn-primary"
-            onClick={() => navigate(`/patient/${nextPatient.id}`)}
-            style={{ padding: '0.75rem 1.5rem' }}
+            className="btn btn-secondary"
+            onClick={() => setShowAddModal(true)}
+            style={{ padding: '0.75rem 1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700 }}
           >
-            Call Next Patient <ArrowRight size={18} />
+            <UserPlus size={18} /> Add Patient
           </button>
+
+          {nextPatient && (
+            <button 
+              className="btn btn-primary"
+              onClick={() => navigate(`/patient/${nextPatient.id}`)}
+              style={{ padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            >
+              Call Next <ArrowRight size={18} />
+            </button>
+          )}
         </div>
       </div>
 
@@ -209,11 +171,16 @@ export function QueuePage() {
               <div style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--text-main)' }}>{patient.name}</div>
               <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                 {patient.age} Yrs • {patient.sex === 'M' ? 'Male' : patient.sex === 'F' ? 'Female' : 'Other'}
+                {patient.pastVisits?.[0]?.diagnosis && (
+                  <span style={{ display: 'block', color: 'var(--primary)', fontWeight: 600, fontSize: '0.8rem', marginTop: '0.2rem' }}>
+                    Reason: {patient.pastVisits[0].diagnosis}
+                  </span>
+                )}
               </div>
             </div>
 
             {/* Vitals Snapshot */}
-            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
               {patient.vitals.bp && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.85rem', background: 'var(--bg-app)', padding: '0.25rem 0.5rem', borderRadius: '6px', border: '1px solid var(--border)' }}>
                   <Heart size={14} style={{ color: '#ec4899' }} />
@@ -254,6 +221,122 @@ export function QueuePage() {
           </div>
         ))}
       </div>
+
+      {/* Add Patient Modal */}
+      {showAddModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.6)', backdropFilter: 'blur(4px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1rem'
+        }}>
+          <div className="card" style={{ width: '100%', maxWidth: '550px', maxHeight: '90vh', overflowY: 'auto', position: 'relative', boxShadow: 'var(--shadow-lg)', border: '1px solid var(--primary)' }}>
+            <button 
+              onClick={() => setShowAddModal(false)}
+              style={{ position: 'absolute', top: '1.25rem', right: '1.25rem', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
+            >
+              <X size={22} />
+            </button>
+
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <UserPlus size={24} /> Register New Patient
+            </h2>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
+              Add a walk-in patient directly into the clinic consultation queue.
+            </p>
+
+            <form onSubmit={handleAddPatient} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', textAlign: 'left' }}>
+              <div>
+                <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-main)' }}>PATIENT FULL NAME *</label>
+                <input 
+                  type="text" 
+                  required
+                  placeholder="e.g. Rajesh Verma"
+                  value={name} onChange={e => setName(e.target.value)}
+                  style={{ width: '100%', padding: '0.65rem', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--bg-app)', color: 'var(--text-main)', marginTop: '0.25rem' }}
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>
+                <div>
+                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-main)' }}>AGE</label>
+                  <input 
+                    type="number" 
+                    value={age} onChange={e => setAge(e.target.value)}
+                    style={{ width: '100%', padding: '0.65rem', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--bg-app)', color: 'var(--text-main)', marginTop: '0.25rem' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-main)' }}>GENDER</label>
+                  <select 
+                    value={sex} onChange={e => setSex(e.target.value as any)}
+                    style={{ width: '100%', padding: '0.65rem', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--bg-app)', color: 'var(--text-main)', marginTop: '0.25rem' }}
+                  >
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-main)' }}>TRIAGE PRIORITY</label>
+                  <select 
+                    value={priority} onChange={e => setPriority(e.target.value as any)}
+                    style={{ width: '100%', padding: '0.65rem', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--bg-app)', color: 'var(--text-main)', marginTop: '0.25rem', fontWeight: 700 }}
+                  >
+                    <option value="normal">Normal</option>
+                    <option value="urgent">Urgent</option>
+                    <option value="critical">Critical</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-main)' }}>REASON FOR VISIT / CHIEF COMPLAINT</label>
+                <input 
+                  type="text" 
+                  placeholder="e.g. High fever, chest congestion, weakness"
+                  value={symptomSummary} onChange={e => setSymptomSummary(e.target.value)}
+                  style={{ width: '100%', padding: '0.65rem', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--bg-app)', color: 'var(--text-main)', marginTop: '0.25rem' }}
+                />
+              </div>
+
+              <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem', marginTop: '0.5rem' }}>
+                <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)' }}>INITIAL VITALS SNAPSHOT</label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem', marginTop: '0.5rem' }}>
+                  <div>
+                    <span style={{ fontSize: '0.75rem' }}>BP</span>
+                    <input type="text" value={bp} onChange={e => setBp(e.target.value)} style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--bg-app)', color: 'var(--text-main)' }} />
+                  </div>
+                  <div>
+                    <span style={{ fontSize: '0.75rem' }}>Temp</span>
+                    <input type="text" value={temp} onChange={e => setTemp(e.target.value)} style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--bg-app)', color: 'var(--text-main)' }} />
+                  </div>
+                  <div>
+                    <span style={{ fontSize: '0.75rem' }}>Pulse</span>
+                    <input type="text" value={pulse} onChange={e => setPulse(e.target.value)} style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--bg-app)', color: 'var(--text-main)' }} />
+                  </div>
+                  <div>
+                    <span style={{ fontSize: '0.75rem' }}>SpO2</span>
+                    <input type="text" value={spo2} onChange={e => setSpo2(e.target.value)} style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--bg-app)', color: 'var(--text-main)' }} />
+                  </div>
+                  <div>
+                    <span style={{ fontSize: '0.75rem' }}>Weight</span>
+                    <input type="text" value={weight} onChange={e => setWeight(e.target.value)} style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--bg-app)', color: 'var(--text-main)' }} />
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1.5rem' }}>
+                <button type="button" className="btn btn-secondary" onClick={() => setShowAddModal(false)}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Plus size={18} /> Register Patient
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -8,7 +8,7 @@ export interface UseAudioRecorderReturn {
   startRecording: () => Promise<void>;
   pauseRecording: () => void;
   resumeRecording: () => void;
-  stopRecording: () => void;
+  stopRecording: () => Promise<Blob | null>;
   resetRecording: () => void;
   error: string | null;
 }
@@ -25,6 +25,7 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const onStopResolverRef = useRef<((blob: Blob | null) => void) | null>(null);
 
   const stopTimer = useCallback(() => {
     if (timerRef.current) {
@@ -81,6 +82,10 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
         streamRef.current = null;
         stopTimer();
         setState('done');
+        if (onStopResolverRef.current) {
+          onStopResolverRef.current(blob);
+          onStopResolverRef.current = null;
+        }
       };
 
       recorder.start(1000); // Capture in 1-second chunks for streaming potential
@@ -108,12 +113,17 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
     }
   }, [startTimer]);
 
-  const stopRecording = useCallback(() => {
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+  const stopRecording = useCallback((): Promise<Blob | null> => {
+    return new Promise((resolve) => {
+      if (!mediaRecorderRef.current || mediaRecorderRef.current.state === 'inactive') {
+        resolve(audioBlob);
+        return;
+      }
+      onStopResolverRef.current = resolve;
       mediaRecorderRef.current.stop();
       setState('processing');
-    }
-  }, []);
+    });
+  }, [audioBlob]);
 
   const resetRecording = useCallback(() => {
     stopTimer();

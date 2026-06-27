@@ -9,13 +9,13 @@ import {
   FileText, 
   Pill 
 } from 'lucide-react';
-import { MOCK_PATIENTS } from './QueuePage';
+import { getPatientById } from '../services/patientStore';
 
 export function PatientContextPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const patient = MOCK_PATIENTS.find(p => p.id === id);
+  const patient = id ? getPatientById(id) : undefined;
 
   if (!patient) {
     return (
