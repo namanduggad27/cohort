@@ -7,7 +7,17 @@ exports.generateEmbeddings = generateEmbeddings;
 exports.generateEmbedding = generateEmbedding;
 const openai_1 = __importDefault(require("openai"));
 const logger_1 = require("../utils/logger");
-const openai = new openai_1.default({ apiKey: process.env.OPENAI_API_KEY });
+// Lazy-initialized so the server starts even without OPENAI_API_KEY (mock mode)
+let _openai = null;
+function getOpenAI() {
+    if (!_openai) {
+        if (!process.env.OPENAI_API_KEY) {
+            throw new Error('OPENAI_API_KEY is not set — cannot generate embeddings without an API key.');
+        }
+        _openai = new openai_1.default({ apiKey: process.env.OPENAI_API_KEY });
+    }
+    return _openai;
+}
 const EMBEDDING_MODEL = 'text-embedding-3-small';
 /**
  * Generate embeddings for a list of texts.
@@ -16,12 +26,19 @@ const EMBEDDING_MODEL = 'text-embedding-3-small';
 async function generateEmbeddings(texts, requestId) {
     if (texts.length === 0)
         return { embeddings: [], tokenCount: 0 };
+    if (!process.env.OPENAI_API_KEY) {
+        logger_1.logger.info('OPENAI_API_KEY not set, using mock 1536-d zero embeddings', { requestId });
+        return {
+            embeddings: texts.map(() => new Array(1536).fill(0)),
+            tokenCount: 0,
+        };
+    }
     logger_1.logger.info('Embedding: Generating', {
         requestId,
         count: texts.length,
         model: EMBEDDING_MODEL,
     });
-    const response = await openai.embeddings.create({
+    const response = await getOpenAI().embeddings.create({
         model: EMBEDDING_MODEL,
         input: texts,
         encoding_format: 'float',

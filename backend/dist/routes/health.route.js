@@ -13,9 +13,9 @@ exports.healthRouter.get('/', async (_req, res) => {
         environment: process.env.NODE_ENV,
         services: {
             pinecone: pineconeOk ? 'connected' : 'disconnected',
-            sarvam: process.env.SARVAM_API_KEY ? 'configured' : 'missing_key',
-            anthropic: process.env.ANTHROPIC_API_KEY ? 'configured' : 'missing_key',
-            openai: process.env.OPENAI_API_KEY ? 'configured' : 'missing_key',
+            sarvam: process.env.SARVAM_API_KEY ? 'configured' : process.env.GROQ_API_KEY ? 'configured (Groq Whisper)' : 'missing_key',
+            anthropic: process.env.ANTHROPIC_API_KEY ? 'configured' : process.env.GROQ_API_KEY ? 'configured (Groq Llama)' : process.env.GEMINI_API_KEY ? 'configured (Gemini)' : 'missing_key',
+            openai: process.env.OPENAI_API_KEY ? 'configured' : process.env.GROQ_API_KEY ? 'configured (Groq)' : 'missing_key',
         },
     };
     const allHealthy = pineconeOk;

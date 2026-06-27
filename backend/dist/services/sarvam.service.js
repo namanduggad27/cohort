@@ -48,11 +48,41 @@ const logger_1 = require("../utils/logger");
  *
  * Docs: https://docs.sarvam.ai/api-reference-docs/speech-to-text-translate
  */
+async function transcribeWithGroq(audioBuffer, mimeType, requestId) {
+    const { default: OpenAI, toFile } = await Promise.resolve().then(() => __importStar(require('openai')));
+    const client = new OpenAI({
+        apiKey: process.env.GROQ_API_KEY,
+        baseURL: 'https://api.groq.com/openai/v1',
+    });
+    const ext = mimeType.includes('webm') ? 'webm' : mimeType.includes('mp4') ? 'mp4' : 'wav';
+    const filename = `audio.${ext}`;
+    const file = await toFile(audioBuffer, filename, { type: mimeType });
+    logger_1.logger.info('Groq STT: Sending audio to whisper-large-v3', { requestId });
+    const startMs = Date.now();
+    const response = await client.audio.transcriptions.create({
+        file,
+        model: 'whisper-large-v3',
+        prompt: 'The audio is a Hindi-English code-switched doctor-patient medical consultation. Output the transcript strictly in Romanized Hinglish (Roman script, e.g. Namaste Doctor sahab, mujhe chest mein dard hai).',
+        response_format: 'verbose_json',
+    });
+    const latencyMs = Date.now() - startMs;
+    logger_1.logger.info('Groq STT: Complete', { requestId, latencyMs });
+    return {
+        transcript: response.text || '',
+        language_code: response.language || 'en',
+        confidence: 0.95,
+        durationSeconds: response.duration ?? audioBuffer.length / 16000,
+    };
+}
 async function transcribeWithSarvam(audioBuffer, mimeType, requestId) {
     const apiKey = process.env.SARVAM_API_KEY;
+    if (!apiKey && process.env.GROQ_API_KEY) {
+        logger_1.logger.info('SARVAM_API_KEY not found, using Groq Whisper instead', { requestId });
+        return transcribeWithGroq(audioBuffer, mimeType, requestId);
+    }
     const apiUrl = process.env.SARVAM_API_URL || 'https://api.sarvam.ai/speech-to-text-translate';
     if (!apiKey) {
-        throw new Error('SARVAM_API_KEY is not configured');
+        throw new Error('SARVAM_API_KEY or GROQ_API_KEY is not configured');
     }
     const form = new form_data_1.default();
     const filename = `audio.${mimeType === 'audio/webm' ? 'webm' : mimeType === 'audio/mp4' ? 'mp4' : 'wav'}`;
@@ -117,6 +147,9 @@ async function transcribeWithSarvam(audioBuffer, mimeType, requestId) {
  * Uses OpenAI Whisper API when Sarvam is unavailable or for English-only audio.
  */
 async function transcribeWithWhisper(audioBuffer, mimeType, requestId) {
+    if (!process.env.OPENAI_API_KEY && process.env.GROQ_API_KEY) {
+        return transcribeWithGroq(audioBuffer, mimeType, requestId);
+    }
     // Dynamic import to avoid loading OpenAI SDK if not needed
     const { default: OpenAI } = await Promise.resolve().then(() => __importStar(require('openai')));
     const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -126,7 +159,7 @@ async function transcribeWithWhisper(audioBuffer, mimeType, requestId) {
     const response = await client.audio.transcriptions.create({
         file,
         model: 'whisper-1',
-        language: 'hi', // Hint for Hindi/Hinglish
+        prompt: 'The audio is a Hindi-English code-switched doctor-patient medical consultation. Output the transcript strictly in Romanized Hinglish (Roman script, e.g. Namaste Doctor sahab, mujhe chest mein dard hai).',
         response_format: 'verbose_json',
     });
     return {
